@@ -71,8 +71,8 @@ class GDLParameterDetails(APIModel):
         bool,
         Field(description="The parameter is locked; i.e. the user cannot modify it"),
     ]
-    flags: Annotated[List[Flag], Field(description="The flags of the parameter.")]
-    possibleValues: List[str] | List[PossibleNumericValue] | None = None
+    flags: Annotated[list[Flag], Field(description="The flags of the parameter.")]
+    possibleValues: list[str] | list[PossibleNumericValue] | None = None
     canHaveCustomValue: Annotated[
         bool | None, Field(description="The parameter can have a custom value.")
     ] = None
@@ -333,6 +333,54 @@ class WindowType(Enum):
     Unknown = "Unknown"
 
 
+class LengthType(Enum):
+    Meter = "Meter"
+    Decimeter = "Decimeter"
+    Centimeter = "Centimeter"
+    Millimeter = "Millimeter"
+    FootFracInch = "FootFracInch"
+    FootDecInch = "FootDecInch"
+    DecFoot = "DecFoot"
+    FracInch = "FracInch"
+    DecInch = "DecInch"
+
+
+class AreaType(Enum):
+    SquareMeter = "SquareMeter"
+    SquareCentimeter = "SquareCentimeter"
+    SquareMillimeter = "SquareMillimeter"
+    SquareFoot = "SquareFoot"
+    SquareInch = "SquareInch"
+
+
+class VolumeType(Enum):
+    CubicMeter = "CubicMeter"
+    Liter = "Liter"
+    CubicCentimeter = "CubicCentimeter"
+    CubicMillimeter = "CubicMillimeter"
+    CubicFoot = "CubicFoot"
+    CubicInch = "CubicInch"
+    CubicYard = "CubicYard"
+    Gallon = "Gallon"
+
+
+class AngleType(Enum):
+    DecimalDegree = "DecimalDegree"
+    DegreeMinSec = "DegreeMinSec"
+    Grad = "Grad"
+    Radian = "Radian"
+    Surveyors = "Surveyors"
+
+
+class AccuracyType(Enum):
+    Off = "Off"
+    ShowSmall5 = "ShowSmall5"
+    ShowSmall25 = "ShowSmall25"
+    ShowSmall1 = "ShowSmall1"
+    ShowSmall01 = "ShowSmall01"
+    InchCaseFractions = "InchCaseFractions"
+
+
 class IssueId(APIModel):
     guid: Annotated[
         UUID,
@@ -439,7 +487,7 @@ class PropertyValueArrayItem(APIModel):
 
 class PropertyValuesArrayItem(APIModel):
     propertyValues: Annotated[
-        List[PropertyValueArrayItem | ErrorItem],
+        list[PropertyValueArrayItem | ErrorItem],
         Field(description="A list of property values."),
     ]
 
@@ -543,49 +591,49 @@ class NormalAnglePropertyValue(APIModel):
 class NormalNumberListPropertyValue(APIModel):
     type: Literal["numberList"] = "numberList"
     status: Literal["normal"] = "normal"
-    value: List[float]
+    value: list[float]
 
 
 class NormalIntegerListPropertyValue(APIModel):
     type: Literal["integerList"] = "integerList"
     status: Literal["normal"] = "normal"
-    value: List[int]
+    value: list[int]
 
 
 class NormalStringListPropertyValue(APIModel):
     type: Literal["stringList"] = "stringList"
     status: Literal["normal"] = "normal"
-    value: List[str]
+    value: list[str]
 
 
 class NormalBooleanListPropertyValue(APIModel):
     type: Literal["booleanList"] = "booleanList"
     status: Literal["normal"] = "normal"
-    value: List[bool]
+    value: list[bool]
 
 
 class NormalLengthListPropertyValue(APIModel):
     type: Literal["lengthList"] = "lengthList"
     status: Literal["normal"] = "normal"
-    value: List[float]
+    value: list[float]
 
 
 class NormalAreaListPropertyValue(APIModel):
     type: Literal["areaList"] = "areaList"
     status: Literal["normal"] = "normal"
-    value: List[float]
+    value: list[float]
 
 
 class NormalVolumeListPropertyValue(APIModel):
     type: Literal["volumeList"] = "volumeList"
     status: Literal["normal"] = "normal"
-    value: List[float]
+    value: list[float]
 
 
 class NormalAngleListPropertyValue(APIModel):
     type: Literal["angleList"] = "angleList"
     status: Literal["normal"] = "normal"
-    value: List[float]
+    value: list[float]
 
 
 class NormalSingleEnumPropertyValue(APIModel):
@@ -601,13 +649,13 @@ class NormalMultiEnumPropertyValue(APIModel):
     type: Literal["multiEnum"] = "multiEnum"
     status: Literal["normal"] = "normal"
     value: Annotated[
-        List[EnumValueIdArrayItem],
+        list[EnumValueIdArrayItem],
         Field(description="A list of enumeration identifiers."),
     ]
 
 
 class ExpressionDefaultValue(APIModel):
-    expressions: List[str]
+    expressions: list[str]
 
 
 class ClassificationSystemId(APIModel):
@@ -652,7 +700,7 @@ class ClassificationIdArrayItem(APIModel):
 
 class ElementClassificationItemArray(APIModel):
     classificationIds: Annotated[
-        List[ClassificationIdArrayItem | ErrorItem],
+        list[ClassificationIdArrayItem | ErrorItem],
         Field(description="A list of element classification identifiers or errors."),
     ]
 
@@ -715,6 +763,13 @@ class DatabaseId(APIModel):
     ]
 
 
+class Zoom(APIModel):
+    xMin: float
+    yMin: float
+    xMax: float
+    yMax: float
+
+
 class ViewSettings(APIModel):
     modelViewOptions: Annotated[
         str | None,
@@ -746,9 +801,28 @@ class ViewSettings(APIModel):
             description="The name of the graphic override combination. If empty, the view has custom graphic override combination."
         ),
     ] = None
+    drawingScale: Annotated[
+        int | None,
+        Field(description="The drawing scale stored on the view, if enabled."),
+    ] = None
+    saveZoom: Annotated[
+        bool | None, Field(description="Whether the zoom box is stored in the view.")
+    ] = None
+    ignoreSavedZoom: Annotated[
+        bool | None,
+        Field(
+            description="Whether changing to the view should ignore its stored zoom."
+        ),
+    ] = None
+    zoom: Annotated[
+        Zoom | None,
+        Field(
+            description="Stored zoom box in model coordinates. Used only when saveZoom is true."
+        ),
+    ] = None
 
 
-class Zoom(APIModel):
+class Zoom1(APIModel):
     xMin: Annotated[float, Field(description="The minimum X value of the zoom box.")]
     yMin: Annotated[float, Field(description="The minimum Y value of the zoom box.")]
     xMax: Annotated[float, Field(description="The maximum X value of the zoom box.")]
@@ -757,7 +831,7 @@ class Zoom(APIModel):
 
 class ViewTransformations(APIModel):
     zoom: Annotated[
-        Zoom,
+        Zoom1,
         Field(
             description="The actual zoom parameters, rectangular region of the model."
         ),
@@ -767,23 +841,23 @@ class ViewTransformations(APIModel):
 
 class Hole2D(APIModel):
     polygonOutline: Annotated[
-        List[Coordinate2D] | None,
+        list[Coordinate2D] | None,
         Field(description="The 2D coordinates of the edge of the hole.", min_length=3),
     ] = None
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the hole.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the hole.")
     ] = None
 
 
 class Hole3D(APIModel):
     polygonCoordinates: Annotated[
-        List[Coordinate3D],
+        list[Coordinate3D],
         Field(
             description="The 3D coordinates of the polygon of the hole.", min_length=3
         ),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the hole.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the hole.")
     ] = None
 
 
@@ -793,37 +867,10 @@ class GeometryType(Enum):
     Polygonal = "Polygonal"
 
 
-class WallDetails(APIModel):
-    geometryType: GeometryType
-    begCoordinate: Coordinate2D
-    endCoordinate: Coordinate2D
-    zCoordinate: float
-    height: Annotated[float, Field(description="height relative to bottom")]
-    bottomOffset: Annotated[
-        float, Field(description="base level of the wall relative to the floor level")
-    ]
-    offset: Annotated[
-        float, Field(description="wall's base line's offset from ref. line")
-    ]
-    arcAngle: Annotated[
-        float | None, Field(description="The arc angle of the curved wall in radians.")
-    ] = None
-    begThickness: Annotated[
-        float | None,
-        Field(description="Thickness at the beginning in case of trapezoid wall"),
-    ] = None
-    endThickness: Annotated[
-        float | None,
-        Field(description="Thickness at the end in case of trapezoid wall"),
-    ] = None
-    polygonOutline: Annotated[
-        List[Coordinate2D] | None,
-        Field(description="Polygon outline in case of polygonal wall"),
-    ] = None
-    polygonArcs: Annotated[
-        List[PolyArc] | None,
-        Field(description="Polygon arcs in case of polygonal wall"),
-    ] = None
+class StructureType(Enum):
+    Basic = "Basic"
+    Composite = "Composite"
+    Profile = "Profile"
 
 
 class BeamDetails(APIModel):
@@ -848,33 +895,9 @@ class BeamDetails(APIModel):
     ]
 
 
-class SlabDetails(APIModel):
-    thickness: Annotated[float, Field(description="Thickness of the slab.")]
-    level: Annotated[
-        float,
-        Field(
-            description="Distance of the reference level of the slab from the floor level."
-        ),
-    ]
-    offsetFromTop: Annotated[
-        float,
-        Field(
-            description="Vertical distance between the reference level and the top of the slab."
-        ),
-    ]
-    zCoordinate: float
-    polygonOutline: Annotated[
-        List[Coordinate2D], Field(description="Polygon outline of the slab.")
-    ]
-    polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the slab.")
-    ] = None
-    holes: Annotated[
-        List[Hole2D],
-        Field(
-            description="A list of 2D holes in an element defined by closed polylines"
-        ),
-    ]
+class StructureType1(Enum):
+    Basic = "Basic"
+    Composite = "Composite"
 
 
 class ColumnDetails(APIModel):
@@ -886,16 +909,10 @@ class ColumnDetails(APIModel):
     ]
 
 
-class ObjectDetails(APIModel):
-    origin: Coordinate3D
-    dimensions: Coordinate3D
-    angle: float
-
-
 class PolylineDetails(APIModel):
-    coordinates: List[Coordinate2D]
+    coordinates: list[Coordinate2D]
     arcs: Annotated[
-        List[PolyArc] | None, Field(description="The arcs of the polyline.")
+        list[PolyArc] | None, Field(description="The arcs of the polyline.")
     ] = None
     zCoordinate: float
 
@@ -969,7 +986,7 @@ class MeshSkirtType(Enum):
 
 class Subline(APIModel):
     coordinates: Annotated[
-        List[Coordinate3D],
+        list[Coordinate3D],
         Field(description="The 3D coordinates of the leveling subline of the mesh."),
     ]
 
@@ -979,23 +996,23 @@ class MeshDetails(APIModel):
     skirtType: MeshSkirtType
     skirtLevel: Annotated[float, Field(description="The height of the skirt.")]
     polygonCoordinates: Annotated[
-        List[Coordinate3D],
+        list[Coordinate3D],
         Field(
             description="The 3D coordinates of the outline polygon of the mesh.",
             min_length=3,
         ),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the mesh.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the mesh.")
     ] = None
     holes: Annotated[
-        List[Hole3D] | None,
+        list[Hole3D] | None,
         Field(
             description="A list of 3D holes in an element defined by closed polylines"
         ),
     ] = None
     sublines: Annotated[
-        List[Subline] | None,
+        list[Subline] | None,
         Field(
             description="The leveling sublines inside the polygon of the mesh.",
             min_length=1,
@@ -1050,10 +1067,10 @@ class RevisionIssue(APIModel):
     markersVisibleSinceIndex: int | None = None
     isIssued: bool
     documentRevisions: Annotated[
-        List[DocumentRevisionReference] | None,
+        list[DocumentRevisionReference] | None,
         Field(description="All document revisions belong to the current issue."),
     ] = None
-    customSchemeData: List[RevisionCustomSchemeDatum] | None = None
+    customSchemeData: list[RevisionCustomSchemeDatum] | None = None
 
 
 class RevisionChange(APIModel):
@@ -1069,7 +1086,7 @@ class RevisionChange(APIModel):
         ),
     ] = None
     isArchived: bool
-    customSchemeData: List[RevisionCustomSchemeDatum] | None = None
+    customSchemeData: list[RevisionCustomSchemeDatum] | None = None
 
 
 class LayoutInfo(APIModel):
@@ -1082,7 +1099,7 @@ class LayoutInfo(APIModel):
     subsetId: str
     subsetName: str
     ownerUser: str
-    customSchemeData: List[RevisionCustomSchemeDatum] | None = None
+    customSchemeData: list[RevisionCustomSchemeDatum] | None = None
 
 
 class Status(Enum):
@@ -1101,14 +1118,14 @@ class DocumentRevision(APIModel):
     ownerUser: str
     status: Status
     changes: Annotated[
-        List[Change] | None,
+        list[Change] | None,
         Field(description="All changes belonging to the given document revision."),
     ] = None
     layoutInfo: LayoutInfo
 
 
 class RevisionChangesArrayItem(APIModel):
-    revisionChanges: List[RevisionChange] | None = None
+    revisionChanges: list[RevisionChange] | None = None
 
 
 class StoryParameters(APIModel):
@@ -1143,14 +1160,14 @@ class AutomaticZoneGeometry(APIModel):
 
 class ManualZoneGeometry(APIModel):
     polygonCoordinates: Annotated[
-        List[Coordinate2D],
+        list[Coordinate2D],
         Field(description="The 2D coordinates of the edge of the zone.", min_length=3),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the zone.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the zone.")
     ] = None
     holes: Annotated[
-        List[Hole2D] | None,
+        list[Hole2D] | None,
         Field(
             description="A list of 2D holes in an element defined by closed polylines"
         ),
@@ -1254,7 +1271,20 @@ class LibraryPartType(Enum):
 
 
 class FavoritesWrapper(APIModel):
-    favorites: Annotated[List[str], Field(description="A list of favorite names")]
+    favorites: Annotated[list[str], Field(description="A list of favorite names")]
+
+
+class GroupId(APIModel):
+    guid: Annotated[
+        UUID,
+        Field(
+            description="A Globally Unique Identifier (or Universally Unique Identifier) in its string representation as defined in RFC 4122.",
+        ),
+    ]
+
+
+class GroupIdArrayItem(APIModel):
+    groupId: GroupId
 
 
 class GetAddOnVersionResult(APIModel):
@@ -1282,6 +1312,7 @@ class GetCurrentWindowTypeResult(APIModel):
 
 class ChangeWindowParameters(APIModel):
     windowType: WindowType
+    databaseId: DatabaseId | None = None
 
 
 ChangeWindowResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
@@ -1336,7 +1367,7 @@ class GetStoriesResult(APIModel):
         ),
     ]
     stories: Annotated[
-        List[StoryParameters],
+        list[StoryParameters],
         Field(
             description="A list of project stories, each with their complete parameters."
         ),
@@ -1345,7 +1376,7 @@ class GetStoriesResult(APIModel):
 
 class SetStoriesParameters(APIModel):
     stories: Annotated[
-        List[StorySettings],
+        list[StorySettings],
         Field(
             description="A list of story settings, used as input for creating or modifying multiple stories."
         ),
@@ -1362,6 +1393,52 @@ class OpenProjectParameters(APIModel):
 
 
 OpenProjectResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
+CloseProjectResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
+SaveProjectResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
+class Length(APIModel):
+    unit: LengthType
+    accuracy: AccuracyType
+    decimals: Annotated[
+        int, Field(description="Number of decimals to display for length values.")
+    ]
+    roundInch: Annotated[int | None, Field(description="Fractional inches.")] = None
+
+
+class Area(APIModel):
+    unit: AreaType
+    accuracy: AccuracyType
+    decimals: Annotated[
+        int, Field(description="Number of decimals to display for area values.")
+    ]
+
+
+class Volume(APIModel):
+    unit: VolumeType
+    accuracy: AccuracyType
+    decimals: Annotated[
+        int, Field(description="Number of decimals to display for volume values.")
+    ]
+
+
+class Angle(APIModel):
+    unit: AngleType
+    decimals: Annotated[
+        int, Field(description="Number of decimals to display for angle values.")
+    ]
+    accuracy: Annotated[int, Field(description="Accuracy for angle values.")]
+
+
+class GetCalculationUnitsResult(APIModel):
+    length: Length
+    area: Area
+    volume: Volume
+    angle: Angle
 
 
 SetGeoLocationResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
@@ -1392,13 +1469,38 @@ class IFCFileOperationParameters(APIModel):
 IFCFileOperationResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
 
 
+class PrintArea(Enum):
+    currentView = "currentView"
+    entireDrawing = "entireDrawing"
+    marquee = "marquee"
+
+
+class PrintViewParameters(APIModel):
+    grid: Annotated[
+        bool | None, Field(description="Print the grid. The default is false.")
+    ] = None
+    fixText: Annotated[
+        bool | None, Field(description="Use fixed text size. The default is false.")
+    ] = None
+    scale: Annotated[
+        int | None, Field(description="Print scale. The default is 100.")
+    ] = None
+    printArea: Annotated[
+        PrintArea | None,
+        Field(description="The area to print. The default is 'currentView'."),
+    ] = None
+
+
+PrintViewResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
 class ChangeSelectionOfElementsResult(APIModel):
     executionResultsOfAddToSelection: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
     executionResultsOfRemoveFromSelection: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
@@ -1412,14 +1514,14 @@ class Details(APIModel):
 
 class SetDetailsOfElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class Get3DBoundingBoxesResult(APIModel):
     boundingBoxes3D: Annotated[
-        List[BoundingBox3DArrayItem | ErrorItem],
+        list[BoundingBox3DArrayItem | ErrorItem],
         Field(description="A list of 3D bounding boxes."),
     ]
 
@@ -1445,7 +1547,7 @@ class Settings(APIModel):
     ]
 
 
-HighlightedColor: TypeAlias = List[int]
+HighlightedColor: TypeAlias = list[int]
 
 
 HighlightElementsResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
@@ -1459,7 +1561,7 @@ class MoveVector(APIModel):
 
 class MoveElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
@@ -1469,14 +1571,14 @@ DeleteElementsResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionRes
 
 class SetGDLParametersOfElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class GetClassificationsOfElementsResult(APIModel):
     elementClassifications: Annotated[
-        List[ElementClassificationItemArray | ErrorItem],
+        list[ElementClassificationItemArray | ErrorItem],
         Field(
             description="The list of element classification item identifiers. Order of the ids are the same as in the input. Non-existing elements or non-existing classification systems are represented by error objects."
         ),
@@ -1485,7 +1587,90 @@ class GetClassificationsOfElementsResult(APIModel):
 
 class SetClassificationsOfElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class Level(APIModel):
+    levelHeight: float
+    levelAngle: Annotated[float, Field(gt=0.0)]
+
+
+class Preset(Enum):
+    WallCompositeFaces = "WallCompositeFaces"
+    WallSkinBorders = "WallSkinBorders"
+    SlabCompositeFaces = "SlabCompositeFaces"
+    SlabSkinBorders = "SlabSkinBorders"
+    BeamOrColumnRefLineEndPoints = "BeamOrColumnRefLineEndPoints"
+    BeamOrColumnBoundingBoxCorners = "BeamOrColumnBoundingBoxCorners"
+    DoorWindowWallHoleCorners = "DoorWindowWallHoleCorners"
+    DoorWindowModelHotspots = "DoorWindowModelHotspots"
+
+
+class StructureType3(Enum):
+    Basic = "Basic"
+    Composite = "Composite"
+    Profile = "Profile"
+
+
+class ModifyWallsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyBeamsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class StructureType4(Enum):
+    Basic = "Basic"
+    Composite = "Composite"
+
+
+class ModifySlabsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyColumnsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyWindowsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyDoorsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyMorphsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class ModifyRoofsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
@@ -1557,6 +1742,13 @@ class RemoveElementNotificationClientParameters(APIModel):
 RemoveElementNotificationClientResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
 
 
+class CreateGroupsResult(APIModel):
+    groupGuids: Annotated[
+        list[GroupIdArrayItem | ErrorItem],
+        Field(description="The results of the group creation operations."),
+    ]
+
+
 class GetFavoritesByTypeParameters(APIModel):
     elementType: ElementType
 
@@ -1588,32 +1780,32 @@ class GetFavoritePreviewImageResult(APIModel):
 
 
 class ApplyFavoritesToElementDefaultsParameters(APIModel):
-    favorites: Annotated[List[str], Field(description="A list of favorite names")]
+    favorites: Annotated[list[str], Field(description="A list of favorite names")]
 
 
 class ApplyFavoritesToElementDefaultsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class CreateFavoritesFromElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class GetAllPropertiesResult(APIModel):
     properties: Annotated[
-        List[PropertyDetails], Field(description="A list of property identifiers.")
+        list[PropertyDetails], Field(description="A list of property identifiers.")
     ]
 
 
 class GetPropertyValuesOfElementsResult(APIModel):
     propertyValuesForElements: Annotated[
-        List[PropertyValuesArrayItem | ErrorItem],
+        list[PropertyValuesArrayItem | ErrorItem],
         Field(
             description="List of property value lists. The order of the outer list is that of the given elements. The order of the inner lists are that of the given properties."
         ),
@@ -1622,14 +1814,14 @@ class GetPropertyValuesOfElementsResult(APIModel):
 
 class SetPropertyValuesOfElementsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class GetPropertyValuesOfAttributesResult(APIModel):
     propertyValuesForAttributes: Annotated[
-        List[PropertyValuesArrayItem | ErrorItem],
+        list[PropertyValuesArrayItem | ErrorItem],
         Field(
             description="List of property value lists. The order of the outer list is that of the given attributes. The order of the inner lists are that of the given properties."
         ),
@@ -1638,56 +1830,56 @@ class GetPropertyValuesOfAttributesResult(APIModel):
 
 class SetPropertyValuesOfAttributesResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class CreatePropertyGroupsParameters(APIModel):
     propertyGroups: Annotated[
-        List[PropertyGroupArrayItem],
+        list[PropertyGroupArrayItem],
         Field(description="The parameters of the new property groups."),
     ]
 
 
 class CreatePropertyGroupsResult(APIModel):
     propertyGroupIds: Annotated[
-        List[PropertyGroupIdArrayItem],
+        list[PropertyGroupIdArrayItem],
         Field(description="The identifiers of the created property groups."),
     ]
 
 
 class DeletePropertyGroupsParameters(APIModel):
     propertyGroupIds: Annotated[
-        List[PropertyGroupIdArrayItem],
+        list[PropertyGroupIdArrayItem],
         Field(description="The identifiers of property groups to delete."),
     ]
 
 
 class DeletePropertyGroupsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class CreatePropertyDefinitionsResult(APIModel):
     propertyIds: Annotated[
-        List[PropertyIdArrayItem | ErrorItem],
+        list[PropertyIdArrayItem | ErrorItem],
         Field(description="A list of property identifiers."),
     ]
 
 
 class DeletePropertyDefinitionsParameters(APIModel):
     propertyIds: Annotated[
-        List[PropertyIdArrayItem],
+        list[PropertyIdArrayItem],
         Field(description="The identifiers of properties to delete."),
     ]
 
 
 class DeletePropertyDefinitionsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
@@ -1717,7 +1909,7 @@ class Library(APIModel):
 
 class GetLibrariesResult(APIModel):
     libraries: Annotated[
-        List[Library], Field(description="A list of project libraries.")
+        list[Library], Field(description="A list of project libraries.")
     ]
 
 
@@ -1726,7 +1918,7 @@ ReloadLibrariesResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionRe
 
 class AddFilesToEmbeddedLibraryResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
@@ -1745,20 +1937,64 @@ class User(APIModel):
 ReleaseElementsResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
 
 
-class PublishPublisherSetParameters(APIModel):
-    publisherSetName: Annotated[
-        str, Field(description="The name of the publisher set.", min_length=1)
-    ]
-    outputPath: Annotated[
-        str | None,
-        Field(
-            description="Full local or LAN path for publishing. Optional, by default the path set in the settings of the publisher set will be used.",
-            min_length=1,
-        ),
-    ] = None
-
-
 UpdateDrawingsResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
+class DetailsDatum(APIModel):
+    name: Annotated[str, Field(min_length=1)]
+    referenceId: Annotated[str, Field(min_length=1)]
+
+
+class CreateDetailsParameters(APIModel):
+    detailsData: list[DetailsDatum]
+
+
+class WorksheetsDatum(APIModel):
+    name: Annotated[str, Field(min_length=1)]
+    referenceId: Annotated[str, Field(min_length=1)]
+
+
+class CreateWorksheetsParameters(APIModel):
+    worksheetsData: list[WorksheetsDatum]
+
+
+class LayoutsDatum(APIModel):
+    masterLayoutName: Annotated[str, Field(min_length=1)]
+    layoutName: Annotated[str, Field(min_length=1)]
+
+
+class CreateLayoutsParameters(APIModel):
+    layoutsData: list[LayoutsDatum]
+
+
+class SubsetsDatum(APIModel):
+    name: Annotated[str, Field(min_length=1)]
+    parentNavigatorItemId: NavigatorItemId | None = None
+    ownPrefix: str | None = None
+    customNumber: str | None = None
+
+
+class CreateSubsetsParameters(APIModel):
+    subsetsData: list[SubsetsDatum]
+
+
+class CreateSubsetsResult(APIModel):
+    executionResults: Annotated[
+        list[SuccessfulExecutionResult | FailedExecutionResult],
+        Field(description="A list of execution results."),
+    ]
+
+
+class DrawingsDatum(APIModel):
+    navigatorItemId: NavigatorItemId
+    layoutDatabaseId: DatabaseId | None = None
+    name: Annotated[str, Field(min_length=1)]
+    position: Coordinate2D
+    scale: Annotated[float | None, Field(gt=0.0)] = None
+
+
+class CreateDrawingsParameters(APIModel):
+    drawingsData: list[DrawingsDatum]
 
 
 class ModelViewOption(APIModel):
@@ -1766,11 +2002,11 @@ class ModelViewOption(APIModel):
 
 
 class GetModelViewOptionsResult(APIModel):
-    modelViewOptions: List[ModelViewOption]
+    modelViewOptions: list[ModelViewOption]
 
 
 class GetViewSettingsResult(APIModel):
-    viewSettings: List[ViewSettings | ErrorItem]
+    viewSettings: list[ViewSettings | ErrorItem]
 
 
 class NavigatorItemIdsWithViewSetting(APIModel):
@@ -1779,18 +2015,18 @@ class NavigatorItemIdsWithViewSetting(APIModel):
 
 
 class SetViewSettingsParameters(APIModel):
-    navigatorItemIdsWithViewSettings: List[NavigatorItemIdsWithViewSetting]
+    navigatorItemIdsWithViewSettings: list[NavigatorItemIdsWithViewSetting]
 
 
 class SetViewSettingsResult(APIModel):
     executionResults: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult],
+        list[SuccessfulExecutionResult | FailedExecutionResult],
         Field(description="A list of execution results."),
     ]
 
 
 class GetView2DTransformationsResult(APIModel):
-    transformations: List[ViewTransformations | ErrorItem]
+    transformations: list[ViewTransformations | ErrorItem]
 
 
 class CutPlane(APIModel):
@@ -1821,10 +2057,13 @@ class CutPlane(APIModel):
 
 
 class Set3DCutPlanesParameters(APIModel):
-    cutPlanes: Annotated[List[CutPlane] | None, Field(min_length=1)] = None
+    cutPlanes: Annotated[list[CutPlane] | None, Field(min_length=1)] = None
 
 
 Set3DCutPlanesResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
+
+
+FitInWindowResult: TypeAlias = SuccessfulExecutionResult | FailedExecutionResult
 
 
 class CreateIssueParameters(APIModel):
@@ -1883,7 +2122,7 @@ class Comment(APIModel):
 
 class GetCommentsFromIssueResult(APIModel):
     comments: Annotated[
-        List[Comment], Field(description="A list of existing comments.")
+        list[Comment], Field(description="A list of existing comments.")
     ]
 
 
@@ -1900,7 +2139,7 @@ class GetElementsAttachedToIssueParameters(APIModel):
 
 class ExportIssuesToBCFParameters(APIModel):
     issues: Annotated[
-        List[IssueIdArrayItem] | None,
+        list[IssueIdArrayItem] | None,
         Field(description="Leave it empty to export all issues."),
     ] = None
     exportPath: Annotated[
@@ -1939,15 +2178,15 @@ ImportIssuesFromBCFResult: TypeAlias = SuccessfulExecutionResult | FailedExecuti
 
 
 class GetRevisionIssuesResult(APIModel):
-    revisionIssues: List[RevisionIssue]
+    revisionIssues: list[RevisionIssue]
 
 
 class GetRevisionChangesResult(APIModel):
-    revisionChanges: List[RevisionChange]
+    revisionChanges: list[RevisionChange]
 
 
 class GetDocumentRevisionsResult(APIModel):
-    documentRevisions: List[DocumentRevision]
+    documentRevisions: list[DocumentRevision]
 
 
 class GetCurrentRevisionChangesOfLayoutsResult(APIModel):
@@ -1979,6 +2218,12 @@ class Coordinates(APIModel):
 
 class ColumnData(APIModel):
     coordinates: Annotated[Coordinates, Field(description="3D coordinate.")]
+    height: Annotated[
+        float | None, Field(description="Optional column height.", gt=0.0)
+    ] = None
+    axisRotationAngle: Annotated[
+        float | None, Field(description="Optional column rotation angle in radians.")
+    ] = None
 
 
 class SlabData(APIModel):
@@ -1986,15 +2231,18 @@ class SlabData(APIModel):
         float,
         Field(description="The Z coordinate value of the reference line of the slab."),
     ]
+    thickness: Annotated[
+        float | None, Field(description="Optional slab thickness.", gt=0.0)
+    ] = None
     polygonCoordinates: Annotated[
-        List[Coordinate2D],
+        list[Coordinate2D],
         Field(description="The 2D coordinates of the edge of the slab.", min_length=3),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the slab.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the slab.")
     ] = None
     holes: Annotated[
-        List[Hole2D] | None,
+        list[Hole2D] | None,
         Field(
             description="A list of 2D holes in an element defined by closed polylines"
         ),
@@ -2008,12 +2256,33 @@ class PolylineData(APIModel):
             description="The identifier of the floor. Optional parameter, by default the current floor is used."
         ),
     ] = None
+    layerIndex: Annotated[
+        int | None,
+        Field(
+            description="Layer attribute index to place the polyline on. Optional parameter, by default the current layer is used."
+        ),
+    ] = None
+    linePenIndex: Annotated[
+        int | None,
+        Field(
+            description="Pen index of the polyline contour. Optional parameter, by default the current pen is used."
+        ),
+    ] = None
+    lineTypeIndex: Annotated[
+        int | None,
+        Field(
+            description="Line type attribute index of the polyline contour. Optional parameter, by default the current line type is used."
+        ),
+    ] = None
+    penWeightMm: Annotated[
+        float | None, Field(description="Optional pen weight override in mm.")
+    ] = None
     coordinates: Annotated[
-        List[Coordinate2D],
+        list[Coordinate2D],
         Field(description="The 2D coordinates of the polyline.", min_length=2),
     ]
     arcs: Annotated[
-        List[PolyArc] | None, Field(description="The arcs of the polyline.")
+        list[PolyArc] | None, Field(description="The arcs of the polyline.")
     ] = None
 
 
@@ -2035,28 +2304,44 @@ class MeshData(APIModel):
         float | None, Field(description="The height of the skirt.")
     ] = None
     polygonCoordinates: Annotated[
-        List[Coordinate3D],
+        list[Coordinate3D],
         Field(
             description="The 3D coordinates of the outline polygon of the mesh.",
             min_length=3,
         ),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the mesh.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the mesh.")
     ] = None
     holes: Annotated[
-        List[Hole3D] | None,
+        list[Hole3D] | None,
         Field(
             description="A list of 3D holes in an element defined by closed polylines"
         ),
     ] = None
     sublines: Annotated[
-        List[Subline] | None,
+        list[Subline] | None,
         Field(
             description="The leveling sublines inside the polygon of the mesh.",
             min_length=1,
         ),
     ] = None
+
+
+class BeamData(APIModel):
+    begCoordinate: Coordinate2D
+    endCoordinate: Coordinate2D
+    zCoordinate: float
+    offset: float | None = None
+    slantAngle: float | None = None
+    arcAngle: float | None = None
+    verticalCurveHeight: float | None = None
+
+
+class StructureType6(Enum):
+    Basic = "Basic"
+    Composite = "Composite"
+    Profile = "Profile"
 
 
 class ProjectLocation(APIModel):
@@ -2186,7 +2471,7 @@ class LayerCombinationAttributeDetails(APIModel):
     ] = None
     name: Annotated[str, Field(description="The name of the layer combination.")]
     layers: Annotated[
-        List[LayersOfLayerCombinationItem],
+        list[LayersOfLayerCombinationItem],
         Field(description="List of Layers included in the Layer Combination."),
     ]
 
@@ -2197,7 +2482,7 @@ class LayerCombinationAttribute(APIModel):
 
 class GDLParameterList(APIModel):
     parameters: Annotated[
-        List[GDLParameterDetails], Field(description="The list of GDL parameters.")
+        list[GDLParameterDetails], Field(description="The list of GDL parameters.")
     ]
 
 
@@ -2254,6 +2539,75 @@ class DatabaseIdArrayItem(APIModel):
     databaseId: DatabaseId
 
 
+class WallDetails(APIModel):
+    geometryType: GeometryType
+    begCoordinate: Coordinate2D
+    endCoordinate: Coordinate2D
+    zCoordinate: float
+    height: Annotated[float, Field(description="height relative to bottom")]
+    bottomOffset: Annotated[
+        float, Field(description="base level of the wall relative to the floor level")
+    ]
+    offset: Annotated[
+        float, Field(description="wall's base line's offset from ref. line")
+    ]
+    arcAngle: Annotated[
+        float | None, Field(description="The arc angle of the curved wall in radians.")
+    ] = None
+    begThickness: Annotated[
+        float | None,
+        Field(description="Thickness at the beginning in case of trapezoid wall"),
+    ] = None
+    endThickness: Annotated[
+        float | None,
+        Field(description="Thickness at the end in case of trapezoid wall"),
+    ] = None
+    polygonOutline: Annotated[
+        list[Coordinate2D] | None,
+        Field(description="Polygon outline in case of polygonal wall"),
+    ] = None
+    polygonArcs: Annotated[
+        list[PolyArc] | None,
+        Field(description="Polygon arcs in case of polygonal wall"),
+    ] = None
+    structureType: StructureType | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+    profileId: AttributeId | None = None
+
+
+class SlabDetails(APIModel):
+    thickness: Annotated[float, Field(description="Thickness of the slab.")]
+    level: Annotated[
+        float,
+        Field(
+            description="Distance of the reference level of the slab from the floor level."
+        ),
+    ]
+    offsetFromTop: Annotated[
+        float,
+        Field(
+            description="Vertical distance between the reference level and the top of the slab."
+        ),
+    ]
+    zCoordinate: float
+    polygonOutline: Annotated[
+        list[Coordinate2D], Field(description="Polygon outline of the slab.")
+    ]
+    polygonArcs: Annotated[
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the slab.")
+    ] = None
+    holes: Annotated[
+        list[Hole2D],
+        Field(
+            description="A list of 2D holes in an element defined by closed polylines"
+        ),
+    ]
+    structureType: StructureType1 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+
+
 class LinkData(APIModel):
     referredView: Annotated[
         ElementId | None,
@@ -2294,7 +2648,7 @@ class DetailWorksheetDetails(APIModel):
         bool, Field(description="Side (detail/worksheet) window is opened?")
     ]
     clipPolygon: Annotated[
-        List[Coordinate2D],
+        list[Coordinate2D],
         Field(description="The clip polygon of the detail/worksheet"),
     ]
     linkData: Annotated[LinkData, Field(description="The marker link data")]
@@ -2304,6 +2658,15 @@ class LibPartBasedElementDetails(APIModel):
     libPart: LibPartDetails
     ownerElementId: ElementId | None = None
     ownerElementType: ElementType | None = None
+
+
+class ObjectDetails(APIModel):
+    libPart: LibPartDetails
+    ownerElementId: ElementId | None = None
+    ownerElementType: ElementType | None = None
+    origin: Coordinate3D
+    dimensions: Coordinate3D
+    angle: float
 
 
 class ZoneDetails(APIModel):
@@ -2319,14 +2682,14 @@ class ZoneDetails(APIModel):
         bool, Field(description="Is the coordinates of the zone manually placed?")
     ]
     polygonCoordinates: Annotated[
-        List[Coordinate2D],
+        list[Coordinate2D],
         Field(description="The 2D coordinates of the edge of the zone.", min_length=3),
     ]
     polygonArcs: Annotated[
-        List[PolyArc] | None, Field(description="Polygon outline arcs of the zone.")
+        list[PolyArc] | None, Field(description="Polygon outline arcs of the zone.")
     ] = None
     holes: Annotated[
-        List[Hole2D] | None,
+        list[Hole2D] | None,
         Field(
             description="A list of 2D holes in an element defined by closed polylines"
         ),
@@ -2341,13 +2704,13 @@ class PropertyDefinition(APIModel):
     isEditable: bool
     defaultValue: BasicDefaultValue | ExpressionDefaultValue | None = None
     possibleEnumValues: Annotated[
-        List[PossibleEnumValue] | None,
+        list[PossibleEnumValue] | None,
         Field(
             description="The possible enum values of the property when the property type is enumeration."
         ),
     ] = None
     availability: Annotated[
-        List[ClassificationItemIdArrayItem],
+        list[ClassificationItemIdArrayItem],
         Field(
             description="The identifiers of classification items the new property is available for."
         ),
@@ -2381,12 +2744,12 @@ class ZoneBoundary(APIModel):
         float, Field(description="The area of the polygon of the boundary.")
     ]
     polygonOutline: Annotated[
-        List[Coordinate3D], Field(description="The outline polygon of the boundary.")
+        list[Coordinate3D], Field(description="The outline polygon of the boundary.")
     ]
 
 
 class ZoneBoundariesWrapper(APIModel):
-    zoneBoundaries: List[ZoneBoundary]
+    zoneBoundaries: list[ZoneBoundary]
 
 
 class BuildingMaterialPhysicalPropertiesArrayItem(APIModel):
@@ -2413,13 +2776,13 @@ class AttributeHeader(APIModel):
 
 class AttributeHeadersWrapper(APIModel):
     attributes: Annotated[
-        List[AttributeHeader], Field(description="Details of attributes.")
+        list[AttributeHeader], Field(description="Details of attributes.")
     ]
 
 
 class GetProjectInfoFieldsResult(APIModel):
     fields: Annotated[
-        List[ProjectInfoField], Field(description="A list of project info fields.")
+        list[ProjectInfoField], Field(description="A list of project info fields.")
     ]
 
 
@@ -2440,7 +2803,7 @@ class ElementsWithDetail(APIModel):
 
 class SetDetailsOfElementsParameters(APIModel):
     elementsWithDetails: Annotated[
-        List[ElementsWithDetail], Field(description="The elements with parameters.")
+        list[ElementsWithDetail], Field(description="The elements with parameters.")
     ]
 
 
@@ -2459,7 +2822,7 @@ class Collision(APIModel):
 
 
 class GetCollisionsResult(APIModel):
-    collisions: List[Collision]
+    collisions: list[Collision]
 
 
 class ElementsWithMoveVector(APIModel):
@@ -2476,67 +2839,309 @@ class ElementsWithMoveVector(APIModel):
 
 class MoveElementsParameters(APIModel):
     elementsWithMoveVectors: Annotated[
-        List[ElementsWithMoveVector],
+        list[ElementsWithMoveVector],
         Field(description="The elements with move vector pairs."),
     ]
 
 
 class GetGDLParametersOfElementsResult(APIModel):
     gdlParametersOfElements: Annotated[
-        List[GDLParameterList], Field(description="The GDL parameters of elements.")
+        list[GDLParameterList], Field(description="The GDL parameters of elements.")
     ]
 
 
 class ElementsWithGDLParameter(APIModel):
     elementId: ElementId
     gdlParameters: Annotated[
-        List[SetGDLParameterByNameDetails | SetGDLParameterByIndexDetails],
+        list[SetGDLParameterByNameDetails | SetGDLParameterByIndexDetails],
         Field(description="The list of GDL parameters."),
     ]
 
 
 class SetGDLParametersOfElementsParameters(APIModel):
     elementsWithGDLParameters: Annotated[
-        List[ElementsWithGDLParameter],
+        list[ElementsWithGDLParameter],
         Field(description="The elements with GDL parameters dictionary pairs."),
     ]
 
 
 class SetClassificationsOfElementsParameters(APIModel):
     elementClassifications: Annotated[
-        List[ElementClassification],
+        list[ElementClassification],
         Field(description="A list of element classification identifiers."),
     ]
 
 
 class CreateColumnsParameters(APIModel):
     columnsData: Annotated[
-        List[ColumnData], Field(description="Array of data to create Columns.")
+        list[ColumnData], Field(description="Array of data to create Columns.")
     ]
+
+
+class CreateBeamsParameters(APIModel):
+    beamsData: list[BeamData]
 
 
 class CreateSlabsParameters(APIModel):
     slabsData: Annotated[
-        List[SlabData], Field(description="Array of data to create Slabs.")
+        list[SlabData], Field(description="Array of data to create Slabs.")
     ]
+
+
+class WindowsDatum(APIModel):
+    ownerWallId: ElementId
+    centerOffset: Annotated[float, Field(ge=0.0)]
+    sillHeight: float | None = None
+    width: Annotated[float | None, Field(gt=0.0)] = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+
+
+class CreateWindowsParameters(APIModel):
+    windowsData: list[WindowsDatum]
+
+
+class DoorsDatum(APIModel):
+    ownerWallId: ElementId
+    centerOffset: Annotated[float, Field(ge=0.0)]
+    sillHeight: float | None = None
+    width: Annotated[float | None, Field(gt=0.0)] = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+
+
+class CreateDoorsParameters(APIModel):
+    doorsData: list[DoorsDatum]
+
+
+class OpeningsDatum(APIModel):
+    ownerElementId: ElementId
+    basePoint: Coordinate3D
+    width: Annotated[float | None, Field(gt=0.0)] = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+
+
+class CreateOpeningsParameters(APIModel):
+    openingsData: list[OpeningsDatum]
+
+
+class MorphsDatum(APIModel):
+    basePoint: Coordinate3D
+    size: Dimensions3D
+    buildingMaterialId: AttributeId | None = None
+
+
+class CreateMorphsParameters(APIModel):
+    morphsData: list[MorphsDatum]
+
+
+class RoofsDatum(APIModel):
+    level: float
+    thickness: Annotated[float | None, Field(gt=0.0)] = None
+    polygonCoordinates: Annotated[list[Coordinate2D], Field(min_length=3)]
+    polygonArcs: list[PolyArc] | None = None
+    holes: Annotated[
+        list[Hole2D] | None,
+        Field(
+            description="A list of 2D holes in an element defined by closed polylines"
+        ),
+    ] = None
+    eavesOverhang: float | None = None
+    levels: Annotated[list[Level] | None, Field(max_length=16, min_length=1)] = None
+    structureType: StructureType1 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+
+
+class CreateRoofsParameters(APIModel):
+    roofsData: list[RoofsDatum]
+
+
+class WitnessPoint(APIModel):
+    elementId: ElementId
+    line: bool | None = None
+    inIndex: int | None = None
+    special: int | None = None
+    nodeType: int | None = None
+    nodeStatus: int | None = None
+    nodeId: Annotated[float | None, Field(ge=0.0)] = None
+
+
+class DimensionsDatum(APIModel):
+    referencePoint: Coordinate2D
+    direction: Coordinate2D
+    floorIndex: float | None = None
+    witnessPoints: Annotated[list[WitnessPoint], Field(min_length=2)]
+
+
+class CreateAssociativeDimensionsParameters(APIModel):
+    dimensionsData: list[DimensionsDatum]
+
+
+class DimensionsDatum1(APIModel):
+    sectionElementId: ElementId
+    referencePoint: Coordinate2D
+    preset: Preset
+    direction: Coordinate2D | None = None
+    skinBorderIndices: Annotated[list[int] | None, Field(min_length=1)] = None
+    beginPlane: bool | None = None
+    totalSizePlane: bool | None = None
+    placeOnTop: bool | None = None
+
+
+class CreateAssociativeDimensionsOnSectionParameters(APIModel):
+    dimensionsData: list[DimensionsDatum1]
+
+
+class DimensionsDatum2(APIModel):
+    wallId: ElementId
+    referencePoint: Coordinate2D
+    direction: Coordinate2D
+
+
+class CreateWallThicknessDimensionsParameters(APIModel):
+    dimensionsData: list[DimensionsDatum2]
 
 
 class CreatePolylinesParameters(APIModel):
     polylinesData: Annotated[
-        List[PolylineData], Field(description="Array of data to create Polylines.")
+        list[PolylineData], Field(description="Array of data to create Polylines.")
     ]
 
 
 class CreateObjectsParameters(APIModel):
     objectsData: Annotated[
-        List[ObjectData], Field(description="Array of data to create Objects.")
+        list[ObjectData], Field(description="Array of data to create Objects.")
     ]
 
 
 class CreateMeshesParameters(APIModel):
     meshesData: Annotated[
-        List[MeshData], Field(description="Array of data to create Meshes.")
+        list[MeshData], Field(description="Array of data to create Meshes.")
     ]
+
+
+class WallsWithDetail(APIModel):
+    elementId: ElementId
+    begCoordinate: Coordinate2D | None = None
+    endCoordinate: Coordinate2D | None = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+    thickness: Annotated[float | None, Field(gt=0.0)] = None
+    bottomOffset: float | None = None
+    offset: float | None = None
+    structureType: StructureType3 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+    profileId: AttributeId | None = None
+
+
+class ModifyWallsParameters(APIModel):
+    wallsWithDetails: list[WallsWithDetail]
+
+
+class BeamsWithDetail(APIModel):
+    elementId: ElementId
+    begCoordinate: Coordinate2D | None = None
+    endCoordinate: Coordinate2D | None = None
+    level: float | None = None
+    offset: float | None = None
+    slantAngle: float | None = None
+    arcAngle: float | None = None
+    verticalCurveHeight: float | None = None
+
+
+class ModifyBeamsParameters(APIModel):
+    beamsWithDetails: list[BeamsWithDetail]
+
+
+class SlabsWithDetail(APIModel):
+    elementId: ElementId
+    zCoordinate: float | None = None
+    thickness: Annotated[float | None, Field(gt=0.0)] = None
+    structureType: StructureType4 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+    polygonOutline: Annotated[list[Coordinate2D] | None, Field(min_length=3)] = None
+    polygonArcs: list[PolyArc] | None = None
+    holes: Annotated[
+        list[Hole2D] | None,
+        Field(
+            description="A list of 2D holes in an element defined by closed polylines"
+        ),
+    ] = None
+
+
+class ModifySlabsParameters(APIModel):
+    slabsWithDetails: list[SlabsWithDetail]
+
+
+class ColumnsWithDetail(APIModel):
+    elementId: ElementId
+    origin: Coordinate2D | None = None
+    zCoordinate: float | None = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+    bottomOffset: float | None = None
+    axisRotationAngle: float | None = None
+
+
+class ModifyColumnsParameters(APIModel):
+    columnsWithDetails: list[ColumnsWithDetail]
+
+
+class WindowsWithDetail(APIModel):
+    elementId: ElementId
+    width: Annotated[float | None, Field(gt=0.0)] = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+    sillHeight: float | None = None
+    centerOffset: Annotated[float | None, Field(ge=0.0)] = None
+
+
+class ModifyWindowsParameters(APIModel):
+    windowsWithDetails: list[WindowsWithDetail]
+
+
+class DoorsWithDetail(APIModel):
+    elementId: ElementId
+    width: Annotated[float | None, Field(gt=0.0)] = None
+    height: Annotated[float | None, Field(gt=0.0)] = None
+    sillHeight: float | None = None
+    centerOffset: Annotated[float | None, Field(ge=0.0)] = None
+
+
+class ModifyDoorsParameters(APIModel):
+    doorsWithDetails: list[DoorsWithDetail]
+
+
+class MorphsWithDetail(APIModel):
+    elementId: ElementId
+    translation: Coordinate3D | None = None
+    rotationDegreesZ: float | None = None
+    buildingMaterialId: AttributeId | None = None
+
+
+class ModifyMorphsParameters(APIModel):
+    morphsWithDetails: list[MorphsWithDetail]
+
+
+class RoofsWithDetail(APIModel):
+    elementId: ElementId
+    level: float | None = None
+    thickness: Annotated[float | None, Field(gt=0.0)] = None
+    eavesOverhang: float | None = None
+    levels: Annotated[list[Level] | None, Field(max_length=16, min_length=1)] = None
+    structureType: StructureType4 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+    polygonOutline: Annotated[list[Coordinate2D] | None, Field(min_length=3)] = None
+    polygonArcs: list[PolyArc] | None = None
+    holes: Annotated[
+        list[Hole2D] | None,
+        Field(
+            description="A list of 2D holes in an element defined by closed polylines"
+        ),
+    ] = None
+
+
+class ModifyRoofsParameters(APIModel):
+    roofsWithDetails: list[RoofsWithDetail]
 
 
 class GetElementPreviewImageParameters(APIModel):
@@ -2597,26 +3202,26 @@ class FavoritesFromElement(APIModel):
 
 
 class CreateFavoritesFromElementsParameters(APIModel):
-    favoritesFromElements: List[FavoritesFromElement]
+    favoritesFromElements: list[FavoritesFromElement]
 
 
 class SetPropertyValuesOfElementsParameters(APIModel):
     elementPropertyValues: Annotated[
-        List[ElementPropertyValue],
+        list[ElementPropertyValue],
         Field(description="A list of element property values."),
     ]
 
 
 class SetPropertyValuesOfAttributesParameters(APIModel):
     attributePropertyValues: Annotated[
-        List[AttributePropertyValue],
+        list[AttributePropertyValue],
         Field(description="A list of attribute property values."),
     ]
 
 
 class CreatePropertyDefinitionsParameters(APIModel):
     propertyDefinitions: Annotated[
-        List[PropertyDefinitionArrayItem],
+        list[PropertyDefinitionArrayItem],
         Field(description="The parameters of the new properties."),
     ]
 
@@ -2658,7 +3263,7 @@ class LayerDataArrayItem(APIModel):
 
 class CreateLayersParameters(APIModel):
     layerDataArray: Annotated[
-        List[LayerDataArrayItem],
+        list[LayerDataArrayItem],
         Field(description="Array of data to create new Layers."),
     ]
     overwriteExisting: Annotated[
@@ -2689,14 +3294,14 @@ class LayerCombinationDataArrayItem(APIModel):
         ),
     ]
     layers: Annotated[
-        List[LayersOfLayerCombinationItem],
+        list[LayersOfLayerCombinationItem],
         Field(description="List of Layers included in the Layer Combination."),
     ]
 
 
 class CreateLayerCombinationsParameters(APIModel):
     layerCombinationDataArray: Annotated[
-        List[LayerCombinationDataArrayItem],
+        list[LayerCombinationDataArrayItem],
         Field(description="Array of data to create new Layer Combinations."),
     ]
     overwriteExisting: Annotated[
@@ -2759,7 +3364,7 @@ class BuildingMaterialDataArrayItem(APIModel):
 
 class CreateBuildingMaterialsParameters(APIModel):
     buildingMaterialDataArray: Annotated[
-        List[BuildingMaterialDataArrayItem],
+        list[BuildingMaterialDataArrayItem],
         Field(description="Array of data to create new Building Materials."),
     ]
     overwriteExisting: Annotated[
@@ -2772,7 +3377,7 @@ class CreateBuildingMaterialsParameters(APIModel):
 
 class GetLayerCombinationsResult(APIModel):
     layerCombinations: Annotated[
-        List[LayerCombinationAttribute | ErrorItem],
+        list[LayerCombinationAttribute | ErrorItem],
         Field(description="A list of layer combinations."),
     ]
 
@@ -2787,7 +3392,7 @@ class ReserveElementsResult(APIModel):
         SuccessfulExecutionResult | FailedExecutionResult,
         Field(description="The result of the execution."),
     ]
-    conflicts: List[Conflict] | None = None
+    conflicts: list[Conflict] | None = None
 
 
 class Issue(APIModel):
@@ -2804,7 +3409,7 @@ class Issue(APIModel):
 
 
 class GetIssuesResult(APIModel):
-    issues: Annotated[List[Issue], Field(description="A list of existing issues.")]
+    issues: Annotated[list[Issue], Field(description="A list of existing issues.")]
 
 
 class DesignOption(APIModel):
@@ -2819,7 +3424,7 @@ class DesignOption(APIModel):
 
 
 class GetDesignOptionsResult(APIModel):
-    designOptions: List[DesignOption]
+    designOptions: list[DesignOption]
 
 
 class DesignOptionSet(APIModel):
@@ -2828,13 +3433,13 @@ class DesignOptionSet(APIModel):
     ]
     name: Annotated[str, Field(description="The name of the design option set.")]
     designOptions: Annotated[
-        List[DesignOptionIdArrayItem],
+        list[DesignOptionIdArrayItem],
         Field(description="The list of design options in the set."),
     ]
 
 
 class GetDesignOptionSetsResult(APIModel):
-    designOptionSets: List[DesignOptionSet]
+    designOptionSets: list[DesignOptionSet]
 
 
 class DesignOptionCombination(APIModel):
@@ -2846,7 +3451,7 @@ class DesignOptionCombination(APIModel):
         str, Field(description="The name of the design option combination.")
     ]
     activeDesignOptions: Annotated[
-        List[DesignOptionIdArrayItem] | None,
+        list[DesignOptionIdArrayItem] | None,
         Field(
             description="The list of active design options in the combination. Available from Archicad 29."
         ),
@@ -2854,7 +3459,7 @@ class DesignOptionCombination(APIModel):
 
 
 class GetDesignOptionCombinationsResult(APIModel):
-    designOptionCombinations: List[DesignOptionCombination]
+    designOptionCombinations: list[DesignOptionCombination]
 
 
 class ZoneData(APIModel):
@@ -2875,6 +3480,19 @@ class ZoneData(APIModel):
             description="Defines the geometry of a zone. Used as input for creating zones."
         ),
     ]
+
+
+class WallData(APIModel):
+    begCoordinate: Coordinate2D
+    endCoordinate: Coordinate2D
+    zCoordinate: float
+    height: Annotated[float, Field(gt=0.0)]
+    thickness: Annotated[float, Field(gt=0.0)]
+    offset: float | None = None
+    structureType: StructureType6 | None = None
+    buildingMaterialId: AttributeId | None = None
+    compositeId: AttributeId | None = None
+    profileId: AttributeId | None = None
 
 
 class LabelData(APIModel):
@@ -2909,7 +3527,7 @@ class AttributeIdArrayItem(APIModel):
 
 class CurtainWallPanelDetails(APIModel):
     polygonCoordinates: Annotated[
-        List[Coordinate3D],
+        list[Coordinate3D],
         Field(description="The 3D coordinates of the panel polygon.", min_length=3),
     ]
     isHidden: Annotated[
@@ -2926,24 +3544,35 @@ class CurtainWallPanelDetails(APIModel):
     ]
     className: str
     frames: Annotated[
-        List[ElementIdArrayItem],
+        list[ElementIdArrayItem],
         Field(description="The surrounding frames.", min_length=3),
     ]
 
 
+class ElementGroupParameters(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem | GroupIdArrayItem],
+        Field(description="The elements or child groups to be grouped.", min_length=2),
+    ]
+    parentGroupId: Annotated[
+        GroupId | None,
+        Field(description="Optional parent group ID to nest this group under."),
+    ] = None
+
+
 class GetElementsByTypeParameters(APIModel):
     elementType: ElementType
-    filters: Annotated[List[ElementFilter] | None, Field(min_length=1)] = None
+    filters: Annotated[list[ElementFilter] | None, Field(min_length=1)] = None
     databases: Annotated[
-        List[DatabaseIdArrayItem] | None,
+        list[DatabaseIdArrayItem] | None,
         Field(description="A list of Archicad databases."),
     ] = None
 
 
 class GetAllElementsParameters(APIModel):
-    filters: Annotated[List[ElementFilter] | None, Field(min_length=1)] = None
+    filters: Annotated[list[ElementFilter] | None, Field(min_length=1)] = None
     databases: Annotated[
-        List[DatabaseIdArrayItem] | None,
+        list[DatabaseIdArrayItem] | None,
         Field(description="A list of Archicad databases."),
     ] = None
 
@@ -2976,18 +3605,29 @@ class DetailsOfElement(APIModel):
 
 
 class GetDetailsOfElementsResult(APIModel):
-    detailsOfElements: List[DetailsOfElement]
+    detailsOfElements: list[DetailsOfElement]
+
+
+class CreateWallsParameters(APIModel):
+    wallsData: list[WallData]
 
 
 class CreateZonesParameters(APIModel):
     zonesData: Annotated[
-        List[ZoneData], Field(description="Array of data to create Zones.")
+        list[ZoneData], Field(description="Array of data to create Zones.")
     ]
 
 
 class CreateLabelsParameters(APIModel):
     labelsData: Annotated[
-        List[LabelData], Field(description="Array of data to create Labels.")
+        list[LabelData], Field(description="Array of data to create Labels.")
+    ]
+
+
+class CreateGroupsParameters(APIModel):
+    elementGroups: Annotated[
+        list[ElementGroupParameters],
+        Field(description="A list of element groups to create."),
     ]
 
 
@@ -3023,12 +3663,12 @@ class CompositeDataArrayItem(APIModel):
         ),
     ]
     useWith: Annotated[
-        List[str] | None,
+        list[str] | None,
         Field(description="Array of types the composite can used with."),
     ] = None
-    skins: Annotated[List[Skin], Field(description="Array of skin data.")]
+    skins: Annotated[list[Skin], Field(description="Array of skin data.")]
     separators: Annotated[
-        List[Separator],
+        list[Separator],
         Field(
             description="Array of skin separator data. The number of items must be the number of skins plus one."
         ),
@@ -3037,7 +3677,7 @@ class CompositeDataArrayItem(APIModel):
 
 class CreateCompositesParameters(APIModel):
     compositeDataArray: Annotated[
-        List[CompositeDataArrayItem],
+        list[CompositeDataArrayItem],
         Field(description="Array of data to create Composites."),
     ]
     overwriteExisting: Annotated[
@@ -3099,7 +3739,7 @@ class SurfaceDataArrayItem(APIModel):
 
 class CreateSurfacesParameters(APIModel):
     surfaceDataArray: Annotated[
-        List[SurfaceDataArrayItem],
+        list[SurfaceDataArrayItem],
         Field(description="Array of data to create new surfaces."),
     ]
     overwriteExisting: Annotated[
@@ -3112,74 +3752,111 @@ class CreateSurfacesParameters(APIModel):
 
 class GetBuildingMaterialPhysicalPropertiesResult(APIModel):
     properties: Annotated[
-        List[BuildingMaterialPhysicalPropertiesArrayItem],
+        list[BuildingMaterialPhysicalPropertiesArrayItem],
         Field(description="A list of building material physical properties"),
     ]
 
 
 class AddFilesToEmbeddedLibraryParameters(APIModel):
     files: Annotated[
-        List[LibraryFileAddition],
+        list[LibraryFileAddition],
         Field(description="A list of library file additions to the embedded library"),
     ]
 
 
+class PublishPublisherSetParameters(APIModel):
+    publisherSetName: Annotated[
+        str, Field(description="The name of the publisher set.", min_length=1)
+    ]
+    outputPath: Annotated[
+        str | None,
+        Field(
+            description="Full local or LAN path for publishing. Optional, by default the path set in the settings of the publisher set will be used.",
+            min_length=1,
+        ),
+    ] = None
+    selectedNavigatorItemIds: Annotated[
+        list[NavigatorItemIdArrayItem] | None,
+        Field(
+            description="Optional publisher-tree navigator items to publish instead of the whole publisher set."
+        ),
+    ] = None
+
+
 class GetDatabaseIdFromNavigatorItemIdParameters(APIModel):
     navigatorItemIds: Annotated[
-        List[NavigatorItemIdArrayItem],
+        list[NavigatorItemIdArrayItem],
         Field(description="A list of navigator item identifiers."),
     ]
 
 
 class GetDatabaseIdFromNavigatorItemIdResult(APIModel):
     databases: Annotated[
-        List[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
+        list[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
+    ]
+
+
+class CreateDetailsResult(APIModel):
+    databases: Annotated[
+        list[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
+    ]
+
+
+class CreateWorksheetsResult(APIModel):
+    databases: Annotated[
+        list[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
+    ]
+
+
+class CreateLayoutsResult(APIModel):
+    databases: Annotated[
+        list[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
     ]
 
 
 class GetViewSettingsParameters(APIModel):
     navigatorItemIds: Annotated[
-        List[NavigatorItemIdArrayItem],
+        list[NavigatorItemIdArrayItem],
         Field(description="A list of navigator item identifiers."),
     ]
 
 
 class GetView2DTransformationsParameters(APIModel):
     databases: Annotated[
-        List[DatabaseIdArrayItem] | None,
+        list[DatabaseIdArrayItem] | None,
         Field(description="A list of Archicad databases."),
     ] = None
 
 
 class GetCurrentRevisionChangesOfLayoutsParameters(APIModel):
     layoutDatabaseIds: Annotated[
-        List[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
+        list[DatabaseIdArrayItem], Field(description="A list of Archicad databases.")
     ]
 
 
 class ElementsWithExecutionResults(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     executionResultForDatabases: Annotated[
-        List[SuccessfulExecutionResult | FailedExecutionResult] | None,
+        list[SuccessfulExecutionResult | FailedExecutionResult] | None,
         Field(description="A list of execution results."),
     ] = None
 
 
 class ConnectedElement(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class ConnectedElementsWrapper(APIModel):
-    connectedElements: List[ConnectedElement]
+    connectedElements: list[ConnectedElement]
 
 
 class GetSelectedElementsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
@@ -3191,135 +3868,135 @@ GetAllElementsResult: TypeAlias = ElementsWithExecutionResults | ErrorItem
 
 class ChangeSelectionOfElementsParameters(APIModel):
     addElementsToSelection: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     removeElementsFromSelection: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
 
 
 class FilterElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
-    filters: Annotated[List[ElementFilter] | None, Field(min_length=1)] = None
+    filters: Annotated[list[ElementFilter] | None, Field(min_length=1)] = None
 
 
 class FilterElementsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetDetailsOfElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class Get3DBoundingBoxesParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetSubelementsOfHierarchicalElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class Subelement(APIModel):
     cWallSegments: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     cWallFrames: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     cWallPanels: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     cWallJunctions: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     cWallAccessories: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     stairRisers: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     stairTreads: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     stairStructures: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingNodes: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingSegments: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingPosts: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingRailEnds: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingRailConnections: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingHandrailEnds: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingHandrailConnections: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingToprailEnds: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingToprailConnections: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingRails: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingToprails: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingHandrails: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingPatterns: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingInnerPosts: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingPanels: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingBalusterSets: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     railingBalusters: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     beamSegments: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
     columnSegments: Annotated[
-        List[ElementIdArrayItem] | None, Field(description="A list of elements.")
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
     ] = None
 
 
 class GetSubelementsOfHierarchicalElementsResult(APIModel):
-    subelements: List[Subelement]
+    subelements: list[Subelement]
 
 
 class GetConnectedElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     connectedElementType: ElementType
 
@@ -3329,20 +4006,20 @@ GetConnectedElementsResult: TypeAlias = ConnectedElementsWrapper | ErrorItem
 
 class GetCollisionsParameters(APIModel):
     elementsGroup1: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     elementsGroup2: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     settings: Settings | None = None
 
 
 class HighlightElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     highlightedColors: Annotated[
-        List[HighlightedColor],
+        list[HighlightedColor],
         Field(description="A list of colors to highlight elements."),
     ]
     wireframe3D: Annotated[
@@ -3352,7 +4029,7 @@ class HighlightElementsParameters(APIModel):
         ),
     ] = None
     nonHighlightedColor: Annotated[
-        List[int] | None,
+        list[int] | None,
         Field(
             description="Optional parameter. Color of the non highlighted elements as an [r, g, b, a] array. Each component must be in the 0-255 range.",
             max_length=4,
@@ -3363,150 +4040,222 @@ class HighlightElementsParameters(APIModel):
 
 class DeleteElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetGDLParametersOfElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetClassificationsOfElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     classificationSystemIds: Annotated[
-        List[ClassificationSystemIdArrayItem],
+        list[ClassificationSystemIdArrayItem],
         Field(description="A list of classification system identifiers."),
     ]
 
 
 class CreateColumnsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateWallsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateBeamsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreateSlabsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateWindowsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateDoorsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateOpeningsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateMorphsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateRoofsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateAssociativeDimensionsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateAssociativeDimensionsOnSectionResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class CreateWallThicknessDimensionsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreateZonesResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreatePolylinesResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreateObjectsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreateMeshesResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class CreateLabelsResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetPropertyValuesOfElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     properties: Annotated[
-        List[PropertyIdArrayItem], Field(description="A list of property identifiers.")
+        list[PropertyIdArrayItem], Field(description="A list of property identifiers.")
     ]
 
 
 class GetPropertyValuesOfAttributesParameters(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
     properties: Annotated[
-        List[PropertyIdArrayItem], Field(description="A list of property identifiers.")
+        list[PropertyIdArrayItem], Field(description="A list of property identifiers.")
     ]
 
 
 class CreateLayersResult(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class CreateLayerCombinationsResult(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class CreateBuildingMaterialsResult(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class CreateCompositesResult(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class CreateSurfacesResult(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class GetBuildingMaterialPhysicalPropertiesParameters(APIModel):
     attributeIds: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class GetLayerCombinationsParameters(APIModel):
     attributes: Annotated[
-        List[AttributeIdArrayItem], Field(description="A list of attributes.")
+        list[AttributeIdArrayItem], Field(description="A list of attributes.")
     ]
 
 
 class ReserveElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class ReleaseElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class UpdateDrawingsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
+
+
+class CreateDrawingsResult(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem], Field(description="A list of elements.")
+    ]
+
+
+class FitInWindowParameters(APIModel):
+    elements: Annotated[
+        list[ElementIdArrayItem] | None, Field(description="A list of elements.")
+    ] = None
 
 
 class AttachElementsToIssueParameters(APIModel):
     issueId: IssueId
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
     type: IssueElementType
 
@@ -3514,29 +4263,32 @@ class AttachElementsToIssueParameters(APIModel):
 class DetachElementsFromIssueParameters(APIModel):
     issueId: IssueId
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetElementsAttachedToIssueResult(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class GetRevisionChangesOfElementsParameters(APIModel):
     elements: Annotated[
-        List[ElementIdArrayItem], Field(description="A list of elements.")
+        list[ElementIdArrayItem], Field(description="A list of elements.")
     ]
 
 
 class Hotlink(APIModel):
     location: Annotated[str, Field(description="The path of the hotlink file.")]
     children: Annotated[
-        List[Hotlink] | None,
+        list[Hotlink] | None,
         Field(description="The children of the hotlink node if it has any."),
     ] = None
 
 
 class GetHotlinksResult(APIModel):
-    hotlinks: Annotated[List[Hotlink], Field(description="A list of hotlink nodes.")]
+    hotlinks: Annotated[list[Hotlink], Field(description="A list of hotlink nodes.")]
+
+
+Hotlink.model_rebuild()
